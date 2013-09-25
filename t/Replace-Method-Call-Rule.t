@@ -48,9 +48,7 @@ sub match_scalar : Tests {
              method_name => 'puts',
              part1 => [],
              part2 => [],
-             structured_args => [
-                 [ methods(content => '"hello"') ],
-             ],
+             structured_args => [ q("hello") ],
          );
 }
 
@@ -70,10 +68,7 @@ sub match_scalar2 : Tests {
              method_name => 'add',
              part1 => [],
              part2 => [],
-             structured_args => [
-                 [ methods(content => '1') ],
-                 [ methods(content => '2') ],
-             ],
+             structured_args => [ 1, 2 ],
          );
 }
 

@@ -73,7 +73,7 @@ sub parse_args {
     $res;
 }
 
-# [tokens] -> [value] or undef
+# [tokens] -> value or undef
 sub parse_scalar {
     my ($self, $tokens) = @_;
 
@@ -91,7 +91,7 @@ sub parse_scalar {
             when ([',', '=>']) {
                 # TODO: see parens
                 shift @$tokens;
-                return $res;
+                last;
             }
             default {
                 given (ref $token) {
@@ -105,7 +105,7 @@ sub parse_scalar {
         }
         shift @$tokens;
     }
-    return $res;
+    @$res && join '', @$res;
 }
 
 sub parse_hash {
