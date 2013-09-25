@@ -49,7 +49,7 @@ sub match {
     return unless $parsed_args;
     ReplaceMethodCall::Matched->new(
         part1           => $part1,
-        method          => $self->method_name,
+        method_name     => $self->method_name,
         structured_args => $parsed_args,
         part2           => $part2,
     );
