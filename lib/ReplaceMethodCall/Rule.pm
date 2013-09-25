@@ -111,7 +111,7 @@ sub parse_scalar {
 sub parse_hash {
     my ($self, $tokens) = @_;
 
-    my $key
+    my $key;
 
     while (@$tokens) {
         my $token = $tokens->[0];
