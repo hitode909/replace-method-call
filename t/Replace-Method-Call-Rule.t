@@ -72,4 +72,54 @@ sub match_scalar2 : Tests {
          );
 }
 
+sub match_list : Tests {
+    my $rule = ReplaceMethodCall::Rule->new(
+        method_name => 'l',
+        arguments => [qw(list)],
+        apply => sub { 'success' },
+    );
+
+    subtest 'empty' => sub {
+        my $doc = doc_from_content('l()');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'l',
+                part1 => [],
+                part2 => [],
+                structured_args => [ [] ],
+            );
+    };
+
+    subtest '1 argument' => sub {
+        my $doc = doc_from_content('l(1)');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'l',
+                part1 => [],
+                part2 => [],
+                structured_args => [ [1] ],
+            );
+    };
+
+    subtest '2 argument' => sub {
+        my $doc = doc_from_content('l(1 , 2)');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'l',
+                part1 => [],
+                part2 => [],
+                structured_args => [ [1, 2] ],
+            );
+    };
+}
+
 1;

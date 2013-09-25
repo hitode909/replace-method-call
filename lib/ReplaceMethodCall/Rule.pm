@@ -67,7 +67,7 @@ sub parse_args {
         my $captured = $self->$parser_method($tokens);
         # warn '---captured---';
         # use Data::Dumper; warn Dumper $captured;
-        return undef unless $res;
+        # return undef unless $res;
         push @$res, $captured;
     }
     $res;
@@ -108,10 +108,22 @@ sub parse_scalar {
     @$res && join '', @$res;
 }
 
+# [tokens] -> [values]
+sub parse_list {
+    my ($self, $tokens) = @_;
+
+    my $res = [];
+
+    while ($element = $self->parse_scalar($tokens)) {
+        push @$res, $element;
+    }
+    $res;
+}
+
 sub parse_hash {
     my ($self, $tokens) = @_;
 
-    my $key;
+    while (@$tokens) { shift @$tokens }
 
     while (@$tokens) {
         my $token = $tokens->[0];
