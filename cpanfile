@@ -9,3 +9,4 @@ test_requires 'Path::Class';
 test_requires 'Test::More';
 test_requires 'Test::Class';
 test_requires 'Exporter::Lite';
+test_requires 'Test::Deep';
