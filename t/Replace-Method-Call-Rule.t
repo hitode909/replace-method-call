@@ -72,10 +72,10 @@ sub match_scalar2 : Tests {
          );
 }
 
-sub match_list : Tests {
+sub match_array : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'l',
-        arguments => [qw(list)],
+        arguments => [qw(array)],
         apply => sub { 'success' },
     );
 

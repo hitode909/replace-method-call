@@ -109,7 +109,7 @@ sub parse_scalar {
 }
 
 # [tokens] -> [values]
-sub parse_list {
+sub parse_array {
     my ($self, $tokens) = @_;
 
     my $res = [];
