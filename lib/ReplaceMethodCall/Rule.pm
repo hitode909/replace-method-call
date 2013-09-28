@@ -57,14 +57,16 @@ sub match {
         return undef;
     }
 
+    my $part1_content = [ map { $_->content} @$part1];
+    my $part2_content = [ map { $_->content} @$part2];
     my $args_content = [ map { $_->content } @$args ];
     my $parsed_args = $self->parse_args($args_content);
     return unless $parsed_args;
     ReplaceMethodCall::Matched->new(
-        part1           => $part1,
+        part1           => $part1_content,
         method_name     => $self->method_name,
         structured_args => $parsed_args,
-        part2           => $part2,
+        part2           => $part2_content,
     );
 }
 

@@ -16,7 +16,6 @@ sub match_no_args : Tests {
         method_name => 'exit',
     );
 
-
     subtest 'when match' => sub {
         my $doc = doc_from_content('exit()');
         my $statement = $doc->find('PPI::Statement')->[0];
@@ -36,6 +35,23 @@ sub match_no_args : Tests {
         my $matched = $rule->match($statement);
         is $matched, undef;
     };
+}
+
+sub parts : Tests {
+    my $rule = ReplaceMethodCall::Rule->new(
+        method_name => 'foo',
+    );
+
+    my $doc = doc_from_content('print foo()->bar()');
+    my $statement = $doc->find('PPI::Statement')->[0];
+    my $matched = $rule->match($statement);
+    cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'foo',
+                part1 => ['print', ' '],
+                part2 => ['->', 'bar', '(', ')'],
+                structured_args => [],
+            );
 }
 
 
