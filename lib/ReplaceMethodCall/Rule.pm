@@ -52,6 +52,11 @@ sub match {
             }
         }
     }
+
+    unless ($method_found) {
+        return undef;
+    }
+
     my $args_content = [ map { $_->content } @$args ];
     my $parsed_args = $self->parse_args($args_content);
     return unless $parsed_args;

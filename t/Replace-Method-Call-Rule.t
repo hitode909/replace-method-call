@@ -16,17 +16,26 @@ sub match_no_args : Tests {
         method_name => 'exit',
     );
 
-    my $doc = doc_from_content('exit()');
-    my $statement = $doc->find('PPI::Statement')->[0];
 
-    my $matched = $rule->match($statement);
-    cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
-         & methods(
-             method_name => 'exit',
-             part1 => [],
-             part2 => [],
-             structured_args => [],
-         );
+    subtest 'when match' => sub {
+        my $doc = doc_from_content('exit()');
+        my $statement = $doc->find('PPI::Statement')->[0];
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'exit',
+                part1 => [],
+                part2 => [],
+                structured_args => [],
+            );
+    };
+
+    subtest 'when not match' => sub {
+        my $doc = doc_from_content('not_exit()');
+        my $statement = $doc->find('PPI::Statement')->[0];
+        my $matched = $rule->match($statement);
+        is $matched, undef;
+    };
 }
 
 
