@@ -18,7 +18,6 @@ sub new {
 
 # args:
 #   method_name: string methor_name
-#   arguments: [ scalar ]
 #   apply:    coderef
 sub register {
     my ($self, %args) = @_;

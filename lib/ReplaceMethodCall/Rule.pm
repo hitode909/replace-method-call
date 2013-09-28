@@ -5,7 +5,6 @@ use Class::Accessor::Lite (
     new => 1,
     ro => [
         'method_name',
-        'arguments',
         'apply',
     ],
 );

@@ -14,7 +14,6 @@ sub instantiate : Tests {
 sub match_no_args : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'exit',
-        arguments => [],
         apply => sub { 'success' },
     );
 
@@ -35,7 +34,6 @@ sub match_no_args : Tests {
 sub match_scalar : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'puts',
-        arguments => [qw(scalar)],
         apply => sub { 'success' },
     );
 
@@ -141,7 +139,6 @@ sub match_scalar : Tests {
 sub match_scalar_two : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'add',
-        arguments => [qw(scalar scalar)],
         apply => sub { 'success' },
     );
 
@@ -161,7 +158,6 @@ sub match_scalar_two : Tests {
 sub match_hash : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'dump',
-        arguments => [qw(scalar scalar)],
         apply => sub { 'success' },
     );
 
@@ -211,7 +207,6 @@ sub match_hash : Tests {
 sub match_array : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'l',
-        arguments => [qw(array)],
         apply => sub { 'success' },
     );
 
