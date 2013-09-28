@@ -56,6 +56,16 @@ sub parts : Tests {
             );
 }
 
+sub dont_match_sub : Tests {
+    my $rule = ReplaceMethodCall::Rule->new(
+        method_name => 'foo',
+    );
+
+    my $doc = doc_from_content('sub foo { print(1); }');
+    my $statement = $doc->find('PPI::Statement')->[0];
+    my $matched = $rule->match($statement);
+    is $matched, undef;
+}
 
 sub match_scalar : Tests {
     my $rule = ReplaceMethodCall::Rule->new(

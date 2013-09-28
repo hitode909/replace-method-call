@@ -17,6 +17,9 @@ use ReplaceMethodCall::Quoted;
 sub match {
     my ($self, $statement) = @_;
 
+    # ignore Statement::Sub, ...
+    return undef unless ref $statement eq 'PPI::Statement';
+
     # statement = <part1>method_name(<args>)<part2>
 
     my ($part1, $part2, $args, $method_found, $paren_level, $paren_found) = ([], [], [], 0, 0, 0);
