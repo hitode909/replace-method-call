@@ -29,6 +29,14 @@ sub register : Tests {
     ];
 }
 
+sub quote : Tests {
+    my $r = ReplaceMethodCall->new;
+
+    is $r->quote(1), '1';
+    is $r->quote('a'), "'a'";
+    is $r->quote(ReplaceMethodCall::Quoted->new('$user->name')), '$user->name';
+}
+
 sub document : Tests {
 
     subtest 'rules are empty' => sub {

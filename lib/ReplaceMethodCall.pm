@@ -4,6 +4,7 @@ use warnings;
 use parent qw(PPI::Transform);
 use List::MoreUtils qw(any);
 use List::Util qw(first);
+use Data::Dumper;
 
 use ReplaceMethodCall::Rule;
 
@@ -82,6 +83,17 @@ sub handle {
     $statement->remove;
 
     1;
+}
+
+# quote value for argument
+sub quote {
+    my ($self, $value) = @_;
+
+    if (ref $value && $value->isa('ReplaceMethodCall::Quoted')) {
+        $value->content;
+    } else {
+        Data::Dumper->new([$value])->Terse(1)->Sortkeys(1)->Indent(0)->Dump;
+    }
 }
 
 1;
