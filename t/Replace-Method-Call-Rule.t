@@ -14,7 +14,6 @@ sub instantiate : Tests {
 sub match_no_args : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'exit',
-        apply => sub { 'success' },
     );
 
     my $doc = doc_from_content('exit()');
@@ -34,7 +33,6 @@ sub match_no_args : Tests {
 sub match_scalar : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'puts',
-        apply => sub { 'success' },
     );
 
     subtest 'number' => sub {
@@ -139,7 +137,6 @@ sub match_scalar : Tests {
 sub match_scalar_two : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'add',
-        apply => sub { 'success' },
     );
 
     my $doc = doc_from_content('add(1, 2)');
@@ -158,7 +155,6 @@ sub match_scalar_two : Tests {
 sub match_hash : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'dump',
-        apply => sub { 'success' },
     );
 
     subtest 'empty' => sub {
@@ -207,7 +203,6 @@ sub match_hash : Tests {
 sub match_array : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'l',
-        apply => sub { 'success' },
     );
 
     subtest 'empty' => sub {
