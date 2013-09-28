@@ -9,6 +9,7 @@ sub _require : Test(startup => 1) {
 
 sub instantiate: Tests {
     isa_ok ReplaceMethodCall->new, 'ReplaceMethodCall';
+    isa_ok ReplaceMethodCall->new, 'PPI::Transform';
 }
 
 sub register : Tests {
