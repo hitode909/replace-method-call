@@ -10,10 +10,23 @@ use Class::Accessor::Lite (
 );
 use PPI;
 
-sub as_string {
-    my ($self) = @_;
+# rule: Rule
+# returns:
+#   PPI::Statement (when converted) or undef (when not)
+sub convert {
+    my ($self, $rule) = @_;
 
-    $self->part1_as_string . $self->method_name . '(' . $self->args_as_string . ')' . $self->part2_as_string;
+    die "apply not defined" unless defined $rule->apply;
+
+    my $new_body = $rule->apply->($self->args);
+
+    return undef unless defined $new_body;
+
+    my $new_content = $self->part1_as_string . $new_body . $self->part2_as_string;
+
+    my $doc = PPI::Document->new(\$new_content);
+    $self->{_doc} = $doc;
+    $doc->find('PPI::Statement')->[0];
 }
 
 sub part1_as_string {
@@ -21,23 +34,9 @@ sub part1_as_string {
     join '', @{$self->part1};
 }
 
-sub args_as_string {
-    my ($self) = @_;
-    join '', @{$self->args};
-}
-
 sub part2_as_string {
     my ($self) = @_;
     join '', @{$self->part2};
-}
-
-
-sub as_statement {
-    my ($self) = @_;
-
-    my $doc = PPI::Document->new(\$self->as_string);
-    $self->{_doc} = $doc;
-    $doc->find('PPI::Statement')->[0];
 }
 
 1;
