@@ -158,6 +158,56 @@ sub match_scalar_two : Tests {
          );
 }
 
+sub match_hash : Tests {
+    my $rule = ReplaceMethodCall::Rule->new(
+        method_name => 'dump',
+        arguments => [qw(scalar scalar)],
+        apply => sub { 'success' },
+    );
+
+    subtest 'empty' => sub {
+        my $doc = doc_from_content('dump({})');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'dump',
+                part1 => [],
+                part2 => [],
+                structured_args => [ {} ],
+            );
+    };
+
+    subtest 'number, string' => sub {
+        my $doc = doc_from_content('dump({num => 1, str => "a"})');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'dump',
+                part1 => [],
+                part2 => [],
+                structured_args => [ {num => 1, str => "a"} ],
+            );
+    };
+
+    subtest 'variable, method' => sub {
+        my $doc = doc_from_content('dump({var => $var, method => $obj->method})');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'dump',
+                part1 => [],
+                part2 => [],
+                # structured_args => [ +{ var => '$var', method => '$obj->method'} ],
+            );
+    };
+}
+
 sub match_array : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'l',
@@ -204,6 +254,20 @@ sub match_array : Tests {
                 part1 => [],
                 part2 => [],
                 structured_args => [ [1, 2] ],
+            );
+    };
+
+    subtest '2 argument' => sub {
+        my $doc = doc_from_content('l([1 , 2, $three, $four->five($six)])');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'l',
+                part1 => [],
+                part2 => [],
+                structured_args => [ [1, 2, '$three', '$four->five($six)'] ],
             );
     };
 }

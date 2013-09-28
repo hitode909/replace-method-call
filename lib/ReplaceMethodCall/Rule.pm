@@ -90,7 +90,7 @@ sub parse_args {
             die "cannot handlle $@";
         }
 
-        my $separators = [',', '=>' ];
+        my $separators = [',', '=>', ']', '}' ];
         my $found = 0;
         my $paren_level = 0;
         my $new_tokens = [];
@@ -113,20 +113,19 @@ sub parse_args {
                     $buffer = '';
                     $found = 0;
                     push @$new_tokens, $token;
+                    next;
                 }
 
                 if ($token eq '(') {
-                    # warn 'up';
                     $paren_level++;
                 }
                 if ($token eq ')') {
-                    # warn 'down';
                     $paren_level--;
                 }
                 $buffer .= $token;
             } else {
                 if ($token eq $name) {
-                    $buffer = $token;
+                    $buffer .= $token;
                     $found++;
                 } else {
                     push @$new_tokens, $token;
