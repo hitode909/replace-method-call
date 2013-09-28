@@ -65,7 +65,7 @@ sub match {
     ReplaceMethodCall::Matched->new(
         part1           => $part1_content,
         method_name     => $self->method_name,
-        structured_args => $parsed_args,
+        args => $parsed_args,
         part2           => $part2_content,
     );
 }

@@ -25,7 +25,7 @@ sub match_no_args : Tests {
                 method_name => 'exit',
                 part1 => [],
                 part2 => [],
-                structured_args => [],
+                args => [],
             );
     };
 
@@ -50,7 +50,7 @@ sub parts : Tests {
                 method_name => 'foo',
                 part1 => ['print', ' '],
                 part2 => ['->', 'bar', '(', ')'],
-                structured_args => [],
+                args => [],
             );
 }
 
@@ -70,7 +70,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                structured_args => [ 1 ],
+                args => [ 1 ],
             );
     };
 
@@ -84,7 +84,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                structured_args => [ q(hello) ],
+                args => [ q(hello) ],
             );
     };
 
@@ -98,7 +98,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                structured_args => [ q($name) ],
+                args => [ q($name) ],
             );
     };
 
@@ -112,7 +112,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                structured_args => [ q($user->name) ],
+                args => [ q($user->name) ],
             );
     };
 
@@ -126,7 +126,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                structured_args => [ q($user->name), q($user->name) ],
+                args => [ q($user->name), q($user->name) ],
             );
     };
 
@@ -140,7 +140,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                structured_args => [ q{$user->name(1)} ],
+                args => [ q{$user->name(1)} ],
             );
     };
 
@@ -154,7 +154,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                structured_args => [ q{$user->name($user->name(1))} ],
+                args => [ q{$user->name($user->name(1))} ],
             );
     };
 }
@@ -173,7 +173,7 @@ sub match_scalar_two : Tests {
              method_name => 'add',
              part1 => [],
              part2 => [],
-             structured_args => [ 1, 2 ],
+             args => [ 1, 2 ],
          );
 }
 
@@ -192,7 +192,7 @@ sub match_hash : Tests {
                 method_name => 'dump',
                 part1 => [],
                 part2 => [],
-                structured_args => [ {} ],
+                args => [ {} ],
             );
     };
 
@@ -206,7 +206,7 @@ sub match_hash : Tests {
                 method_name => 'dump',
                 part1 => [],
                 part2 => [],
-                structured_args => [ {num => 1, str => "a"} ],
+                args => [ {num => 1, str => "a"} ],
             );
     };
 
@@ -220,7 +220,7 @@ sub match_hash : Tests {
                 method_name => 'dump',
                 part1 => [],
                 part2 => [],
-                # structured_args => [ +{ var => '$var', method => '$obj->method'} ],
+                # args => [ +{ var => '$var', method => '$obj->method'} ],
             );
     };
 }
@@ -240,7 +240,7 @@ sub match_array : Tests {
                 method_name => 'l',
                 part1 => [],
                 part2 => [],
-                structured_args => [ [] ],
+                args => [ [] ],
             );
     };
 
@@ -254,7 +254,7 @@ sub match_array : Tests {
                 method_name => 'l',
                 part1 => [],
                 part2 => [],
-                structured_args => [ [1] ],
+                args => [ [1] ],
             );
     };
 
@@ -268,7 +268,7 @@ sub match_array : Tests {
                 method_name => 'l',
                 part1 => [],
                 part2 => [],
-                structured_args => [ [1, 2] ],
+                args => [ [1, 2] ],
             );
     };
 
@@ -282,7 +282,7 @@ sub match_array : Tests {
                 method_name => 'l',
                 part1 => [],
                 part2 => [],
-                structured_args => [ [1, 2, '$three', '$four->five($six)'] ],
+                args => [ [1, 2, '$three', '$four->five($six)'] ],
             );
     };
 }

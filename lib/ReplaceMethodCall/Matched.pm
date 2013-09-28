@@ -2,10 +2,10 @@ package ReplaceMethodCall::Matched;
 use Class::Accessor::Lite (
     new => 1,
     ro => [
-        'part1',                # [ tokens ]
-        'method_name',               # Str
-        'structured_args',      # [ structured tokens ]
-        'part2',                # [ tokens ]
+        'part1',       # [ tokens ]
+        'method_name', # Str
+        'args',        # [ args ]
+        'part2',       # [ tokens ]
     ],
 );
 use PPI;
