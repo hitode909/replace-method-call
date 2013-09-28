@@ -19,7 +19,7 @@ sub match {
 
     # statement = <part1>method_name(<args>)<part2>
 
-    my ($part1, $part2, $args, $method_found, $paren_stack, $paren_found) = ([], [], [], 0, 0, 0);
+    my ($part1, $part2, $args, $method_found, $paren_level, $paren_found) = ([], [], [], 0, 0, 0);
 
     for my $token (@{$statement->find('PPI::Token')}) {
         if ($paren_found) {
@@ -28,14 +28,14 @@ sub match {
         } elsif ($method_found) {
             # args
             if ($token eq '(') {
-                if ($paren_stack > 0) {
+                if ($paren_level > 0) {
                     push @$args, $token;
                 }
-                $paren_stack++;
+                $paren_level++;
                 next;
             } elsif ($token eq ')') {
-                $paren_stack--;
-                if ($paren_stack == 0) {
+                $paren_level--;
+                if ($paren_level == 0) {
                     $paren_found = 1;
                 } else {
                     push @$args, $token;
