@@ -80,7 +80,7 @@ sub parse_args {
 
     my $last_code;
 
-    for (0..5) {
+    while(1) {
         my $code =  '[' . join('', @$tokens) . ']';
 
         if ($last_code && $code eq $last_code) {
