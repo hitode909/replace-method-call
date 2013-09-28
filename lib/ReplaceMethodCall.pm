@@ -16,6 +16,11 @@ sub new {
     );
 }
 
+sub rules {
+    my ($self) = @_;
+    $self->{rules};
+}
+
 # args:
 #   method_name: string methor_name
 #   apply:    coderef
@@ -73,6 +78,5 @@ sub handle {
     warn 'success';
     1;
 }
-
 
 1;
