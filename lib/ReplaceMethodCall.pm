@@ -31,13 +31,6 @@ sub register {
     push @{$self->{rules}}, ReplaceMethodCall::Rule->new(%args);
 }
 
-sub file {
-    my ($self, $input, $output) = @_;
-
-    $self->SUPER::file($input, $output);
-    $self->{documents} = [];
-}
-
 sub document {
     my ($self, $document) = @_;
 

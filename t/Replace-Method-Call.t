@@ -1,5 +1,7 @@
 package t::ReplaceMethodCall;
 use t::test;
+use Path::Class;
+use File::Temp;
 
 sub _require : Test(startup => 1) {
     my ($self) = @_;
@@ -130,6 +132,24 @@ sub document : Tests {
             is $doc, 'reverse_add($y, $x)';
         };
     };
+}
+
+sub _file : Tests {
+    my $r = ReplaceMethodCall->new;
+
+    $r->register(
+        method_name => 'foo',
+        apply => sub { 'bar' },
+    );
+
+    my $fh = File::Temp->new;
+    print $fh 'foo';
+    my $file = $fh->filename;
+    $fh->close;
+
+    ok $r->file($file);
+
+    is file($file)->slurp, 'bar';
 }
 
 1;
