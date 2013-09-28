@@ -108,6 +108,13 @@ sub document : Tests {
             is $doc, 'reverse_add(2, 1)';
         };
 
+        subtest 'match multil' => sub {
+            my $doc = doc_from_content("add(1, 2);\nadd(3, 4);");
+
+            is $r->document($doc), 2;
+            is $doc, "reverse_add(2, 1);\nreverse_add(4, 3);";
+        };
+
         subtest 'string literal' => sub {
             my $doc = doc_from_content(q{add('a', 'b')});
 
