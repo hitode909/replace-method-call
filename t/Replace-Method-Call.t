@@ -96,7 +96,7 @@ sub document : Tests {
                 my ($args) = @_;
                 my $arg1 = $args->[0];
                 my $arg2 = $args->[1];
-                "reverse_add($arg2, $arg1)";
+                "reverse_add(@{[ $r->quote($arg2) ]}, @{[ $r->quote($arg1) ]})";
             },
         );
 
@@ -108,12 +108,11 @@ sub document : Tests {
         };
 
         subtest 'string literal' => sub {
-            my $doc = doc_from_content('add("a", "b")');
+            my $doc = doc_from_content(q{add('a', 'b')});
 
             is $r->document($doc), 1;
 
-            local $TODO = 'String not supported';
-            is $doc, 'reverse_add("b", "a")';
+            is $doc, q{reverse_add('b', 'a')};
         };
 
         subtest 'variable' => sub {
