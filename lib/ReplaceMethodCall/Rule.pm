@@ -94,6 +94,10 @@ sub parse_args {
             return $res;
         }
 
+        if ($@ =~ /Undefined subroutine/) {
+            # XXX: not supported yet
+            return undef;
+        }
         my ($name) = $@ =~ /Global symbol "([^"]+)"/;
         unless (defined $name) {
             die "cannot handlle $@";

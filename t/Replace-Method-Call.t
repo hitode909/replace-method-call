@@ -131,6 +131,13 @@ sub document : Tests {
             is $r->document($doc), 1;
             is $doc, 'reverse_add($y, $x)';
         };
+
+        subtest 'nested' => sub {
+            local $TODO = 'not supported';
+            my $doc = doc_from_content('add(add(1, 2), 3)');
+            is $r->document($doc), 1;
+            is $doc, 'reverse_add(3, reverse_add(2, 1))';
+        };
     };
 }
 
