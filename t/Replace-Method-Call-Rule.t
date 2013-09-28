@@ -39,20 +39,106 @@ sub match_scalar : Tests {
         apply => sub { 'success' },
     );
 
-    my $doc = doc_from_content('puts("hello")');
-    my $statement = $doc->find('PPI::Statement')->[0];
+    subtest 'number' => sub {
+        my $doc = doc_from_content('puts(1)');
+        my $statement = $doc->find('PPI::Statement')->[0];
 
-    my $matched = $rule->match($statement);
-    cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
-         & methods(
-             method_name => 'puts',
-             part1 => [],
-             part2 => [],
-             structured_args => [ q("hello") ],
-         );
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                structured_args => [ 1 ],
+            );
+    };
+
+    subtest 'string' => sub {
+        my $doc = doc_from_content('puts("hello")');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                structured_args => [ q(hello) ],
+            );
+    };
+
+    subtest 'variable' => sub {
+        my $doc = doc_from_content('puts($name)');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                structured_args => [ q($name) ],
+            );
+    };
+
+    subtest 'method' => sub {
+        my $doc = doc_from_content('puts($user->name)');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                structured_args => [ q($user->name) ],
+            );
+    };
+
+    subtest 'two methods' => sub {
+        my $doc = doc_from_content('puts($user->name, $user->name)');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                structured_args => [ q($user->name), q($user->name) ],
+            );
+    };
+
+    subtest 'method with paren' => sub {
+        my $doc = doc_from_content('puts($user->name(1))');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                structured_args => [ q{$user->name(1)} ],
+            );
+    };
+
+    subtest 'nested method call' => sub {
+        my $doc = doc_from_content('puts($user->name($user->name(1)))');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                structured_args => [ q{$user->name($user->name(1))} ],
+            );
+    };
 }
 
-sub match_scalar2 : Tests {
+sub match_scalar_two : Tests {
     my $rule = ReplaceMethodCall::Rule->new(
         method_name => 'add',
         arguments => [qw(scalar scalar)],
@@ -80,7 +166,7 @@ sub match_array : Tests {
     );
 
     subtest 'empty' => sub {
-        my $doc = doc_from_content('l()');
+        my $doc = doc_from_content('l([])');
         my $statement = $doc->find('PPI::Statement')->[0];
 
         my $matched = $rule->match($statement);
@@ -94,7 +180,7 @@ sub match_array : Tests {
     };
 
     subtest '1 argument' => sub {
-        my $doc = doc_from_content('l(1)');
+        my $doc = doc_from_content('l([1])');
         my $statement = $doc->find('PPI::Statement')->[0];
 
         my $matched = $rule->match($statement);
@@ -108,7 +194,7 @@ sub match_array : Tests {
     };
 
     subtest '2 argument' => sub {
-        my $doc = doc_from_content('l(1 , 2)');
+        my $doc = doc_from_content('l([1 , 2])');
         my $statement = $doc->find('PPI::Statement')->[0];
 
         my $matched = $rule->match($statement);

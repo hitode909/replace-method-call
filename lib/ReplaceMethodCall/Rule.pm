@@ -1,4 +1,6 @@
 package ReplaceMethodCall::Rule;
+use strict;
+use warnings;
 use Class::Accessor::Lite (
     new => 1,
     ro => [
@@ -9,6 +11,7 @@ use Class::Accessor::Lite (
 );
 use feature 'switch';
 
+use Data::Dumper;
 use ReplaceMethodCall::Matched;
 
 # returns: Matched or undef
@@ -26,12 +29,17 @@ sub match {
         } elsif ($method_found) {
             # args
             if ($token eq '(') {
+                if ($paren_stack > 0) {
+                    push @$args, $token;
+                }
                 $paren_stack++;
                 next;
             } elsif ($token eq ')') {
                 $paren_stack--;
                 if ($paren_stack == 0) {
                     $paren_found = 1;
+                } else {
+                    push @$args, $token;
                 }
             } else {
                 push @$args, $token;
@@ -45,7 +53,8 @@ sub match {
             }
         }
     }
-    my $parsed_args = $self->parse_args($args);
+    my $args_content = [ map { $_->content } @$args ];
+    my $parsed_args = $self->parse_args($args_content);
     return unless $parsed_args;
     ReplaceMethodCall::Matched->new(
         part1           => $part1,
@@ -55,78 +64,80 @@ sub match {
     );
 }
 
-# [ tokens ] to [ tokens <-> arguments ]
-# [ '1' ',' '2' ] to [1, 2]
 sub parse_args {
     my ($self, $tokens) = @_;
 
-    my $res = [];
+    return [] unless @$tokens;
 
-    for my $argument (@{$self->arguments}) {
-        my $parser_method = "parse_$argument";
-        my $captured = $self->$parser_method($tokens);
-        # warn '---captured---';
-        # use Data::Dumper; warn Dumper $captured;
-        # return undef unless $res;
-        push @$res, $captured;
-    }
-    $res;
-}
+    my $last_code;
 
-# [tokens] -> value or undef
-sub parse_scalar {
-    my ($self, $tokens) = @_;
+    for (0..5) {
+        my $code =  '[' . join('', @$tokens) . ']';
 
-    # warn '---capturing scalar ---';
-    # use Data::Dumper; warn Dumper $tokens;
+        if ($last_code && $code eq $last_code) {
+            die "failed to parse $code";
+        }
+        $last_code = $code;
 
-    my $res = [];
+        # warn "code is $code";
+        my $res = eval $code;
+        unless ($@) {
+            return $res;
+        }
 
-    my $paren_stack = 0;
+        my ($name) = $@ =~ /Global symbol "([^"]+)"/;
+        unless (defined $name) {
+            die "cannot handlle $@";
+        }
 
-    while (@$tokens) {
-        my $token = $tokens->[0];
-        # warn "watching $token";
-        given ($token->content) {
-            when ([',', '=>']) {
-                # TODO: see parens
-                shift @$tokens;
-                last;
-            }
-            default {
-                given (ref $token) {
-                    when ('PPI::Token::Whitespace') {
-                    }
-                    default {
-                        push @$res, $token;
-                    }
+        my $separators = [',', '=>' ];
+        my $found = 0;
+        my $paren_level = 0;
+        my $new_tokens = [];
+        my $buffer = '';
+
+        for my $token (@$tokens) {
+            # use Data::Dumper; warn Dumper +{
+            #     token => $token.q(),
+            #     buffer => $buffer,
+            #     new_tokens => $new_tokens,
+            #     found => $found,
+            #     paren_level => $paren_level,
+            #     sep => $token ~~ $separators,
+            # };
+            if ($found) {
+                if ($token ~~ $separators && $paren_level == 0) {
+                    # warn 'zero';
+                    my $quoted = Data::Dumper->new([$buffer])->Terse(1)->Sortkeys(1)->Indent(0)->Dump;
+                    push @$new_tokens, $quoted;
+                    $buffer = '';
+                    $found = 0;
+                    push @$new_tokens, $token;
+                }
+
+                if ($token eq '(') {
+                    # warn 'up';
+                    $paren_level++;
+                }
+                if ($token eq ')') {
+                    # warn 'down';
+                    $paren_level--;
+                }
+                $buffer .= $token;
+            } else {
+                if ($token eq $name) {
+                    $buffer = $token;
+                    $found++;
+                } else {
+                    push @$new_tokens, $token;
                 }
             }
         }
-        shift @$tokens;
-    }
-    @$res && join '', @$res;
-}
-
-# [tokens] -> [values]
-sub parse_array {
-    my ($self, $tokens) = @_;
-
-    my $res = [];
-
-    while ($element = $self->parse_scalar($tokens)) {
-        push @$res, $element;
-    }
-    $res;
-}
-
-sub parse_hash {
-    my ($self, $tokens) = @_;
-
-    while (@$tokens) { shift @$tokens }
-
-    while (@$tokens) {
-        my $token = $tokens->[0];
+        if (length $buffer) {
+            my $quoted = Data::Dumper->new([$buffer])->Terse(1)->Sortkeys(1)->Indent(0)->Dump;
+            push @$new_tokens, $quoted;
+        }
+        $tokens = $new_tokens;
     }
 }
 
