@@ -47,6 +47,8 @@ sub document {
     for my $statement (@$statements) {
         $changed++ if $self->handle($document, $statement);
     }
+
+    $changed;
 }
 
 sub handle {
@@ -66,16 +68,19 @@ sub handle {
 
     my $matched = $rule->match($statement);
 
-    use Data::Dumper; warn Dumper $matched;
+    # use Data::Dumper; warn Dumper $matched;
 
-    return unless $matched;
+    my $new_statement = $matched->convert($rule);
+
+    # use Data::Dumper; warn Dumper $new_statement;
+
+    return unless $new_statement;
 
     push @{$self->{_matched_objects}}, $matched;
 
-    $statement->insert_before($matched->as_statement);
+    $statement->insert_before($new_statement);
     $statement->remove;
 
-    warn 'success';
     1;
 }
 

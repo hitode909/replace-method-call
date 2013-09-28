@@ -29,4 +29,83 @@ sub register : Tests {
     ];
 }
 
+sub document : Tests {
+
+    subtest 'rules are empty' => sub {
+        my $r = ReplaceMethodCall->new;
+
+        my $doc = doc_from_content('print 1');
+
+        is $r->document($doc), 0;
+    };
+
+    subtest 'rules not match' => sub {
+        my $r = ReplaceMethodCall->new;
+
+        $r->register(
+            method_name => 'foo',
+            apply => sub { },
+        );
+
+        my $doc = doc_from_content('print 1');
+
+        is $r->document($doc), 0;
+    };
+
+    subtest 'match but not changed' => sub {
+        my $r = ReplaceMethodCall->new;
+
+        $r->register(
+            method_name => 'foo',
+            apply => sub { undef },
+        );
+
+        my $doc = doc_from_content('foo()');
+
+        is $r->document($doc), 0;
+    };
+
+    subtest 'match, changed' => sub {
+        my $r = ReplaceMethodCall->new;
+
+        $r->register(
+            method_name => 'foo',
+            apply => sub { 'bar()' },
+        );
+
+        my $doc = doc_from_content('foo()');
+
+        is $r->document($doc), 1;
+        is $doc, 'bar()', 'doc changed';
+    };
+
+    subtest 'match, changed, using arguments' => sub {
+        my $r = ReplaceMethodCall->new;
+
+        $r->register(
+            method_name => 'add',
+            apply => sub {
+                my ($args) = @_;
+                my $arg1 = $args->[0];
+                my $arg2 = $args->[1];
+                "reverse_add($arg2, $arg1)";
+            },
+        );
+
+        subtest 'literal' => sub {
+            my $doc = doc_from_content('add(1, 2)');
+
+            is $r->document($doc), 1;
+            is $doc, 'reverse_add(2, 1)';
+        };
+
+        subtest 'variable' => sub {
+            my $doc = doc_from_content('add($x, $y)');
+
+            is $r->document($doc), 1;
+            is $doc, 'reverse_add($y, $x)';
+        };
+    };
+}
+
 1;
