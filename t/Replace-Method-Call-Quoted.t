@@ -16,3 +16,10 @@ sub content : Tests {
     is $q->content, 'hi';
 }
 
+sub to_sorce : Tests {
+
+    is ReplaceMethodCall::Quoted->new(1)->to_source, q{ReplaceMethodCall::Quoted->new(1)};
+    is ReplaceMethodCall::Quoted->new('hi')->to_source, q{ReplaceMethodCall::Quoted->new('hi')};
+    is ReplaceMethodCall::Quoted->new('$user->name')->to_source, q{ReplaceMethodCall::Quoted->new('$user->name')};
+}
+
