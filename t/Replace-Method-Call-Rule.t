@@ -1,6 +1,8 @@
 package t::ReplaceMethodCall::Rule;
 use t::test;
 
+use ReplaceMethodCall::Quoted;
+
 sub _require : Test(startup => 1) {
     my ($self) = @_;
 
@@ -98,7 +100,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                args => [ q($name) ],
+                args => [ isa('ReplaceMethodCall::Quoted')  & methods(content => q($name)) ],
             );
     };
 
@@ -112,7 +114,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                args => [ q($user->name) ],
+                args => [ isa('ReplaceMethodCall::Quoted')  & methods(content => q($user->name)) ],
             );
     };
 
@@ -126,7 +128,11 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                args => [ q($user->name), q($user->name) ],
+                args => [
+                    isa('ReplaceMethodCall::Quoted')  & methods(content => q($user->name)),
+                    isa('ReplaceMethodCall::Quoted')  & methods(content => q($user->name)),
+                ],
+
             );
     };
 
@@ -140,7 +146,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                args => [ q{$user->name(1)} ],
+                args => [ isa('ReplaceMethodCall::Quoted')  & methods(content => q($user->name(1))) ],
             );
     };
 
@@ -154,7 +160,7 @@ sub match_scalar : Tests {
                 method_name => 'puts',
                 part1 => [],
                 part2 => [],
-                args => [ q{$user->name($user->name(1))} ],
+                args => [ isa('ReplaceMethodCall::Quoted')  & methods(content => q{$user->name($user->name(1))}) ],
             );
     };
 }
@@ -282,7 +288,14 @@ sub match_array : Tests {
                 method_name => 'l',
                 part1 => [],
                 part2 => [],
-                args => [ [1, 2, '$three', '$four->five($six)'] ],
+                args => [
+                    [
+                        1,
+                        2,
+                        isa('ReplaceMethodCall::Quoted')  & methods(content => q{$three}),
+                        isa('ReplaceMethodCall::Quoted')  & methods(content => q{$four->five($six)}),
+                    ],
+                ]
             );
     };
 }

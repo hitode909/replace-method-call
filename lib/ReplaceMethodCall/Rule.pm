@@ -10,8 +10,8 @@ use Class::Accessor::Lite (
 );
 use feature 'switch';
 
-use Data::Dumper;
 use ReplaceMethodCall::Matched;
+use ReplaceMethodCall::Quoted;
 
 # returns: Matched or undef
 sub match {
@@ -114,8 +114,7 @@ sub parse_args {
             if ($found) {
                 if ($token ~~ $separators && $paren_level == 0) {
                     # warn 'zero';
-                    my $quoted = Data::Dumper->new([$buffer])->Terse(1)->Sortkeys(1)->Indent(0)->Dump;
-                    push @$new_tokens, $quoted;
+                    push @$new_tokens, ReplaceMethodCall::Quoted->new($buffer)->to_source;
                     $buffer = '';
                     $found = 0;
                     push @$new_tokens, $token;
@@ -139,8 +138,7 @@ sub parse_args {
             }
         }
         if (length $buffer) {
-            my $quoted = Data::Dumper->new([$buffer])->Terse(1)->Sortkeys(1)->Indent(0)->Dump;
-            push @$new_tokens, $quoted;
+            push @$new_tokens, ReplaceMethodCall::Quoted->new($buffer)->to_source;
         }
         $tokens = $new_tokens;
     }
