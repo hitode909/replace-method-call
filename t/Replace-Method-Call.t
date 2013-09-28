@@ -92,11 +92,20 @@ sub document : Tests {
             },
         );
 
-        subtest 'literal' => sub {
+        subtest 'number literal' => sub {
             my $doc = doc_from_content('add(1, 2)');
 
             is $r->document($doc), 1;
             is $doc, 'reverse_add(2, 1)';
+        };
+
+        subtest 'string literal' => sub {
+            my $doc = doc_from_content('add("a", "b")');
+
+            is $r->document($doc), 1;
+
+            local $TODO = 'String not supported';
+            is $doc, 'reverse_add("b", "a")';
         };
 
         subtest 'variable' => sub {
