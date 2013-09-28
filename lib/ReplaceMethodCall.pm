@@ -61,6 +61,7 @@ sub handle {
     return unless $rule;
 
     my $matched = $rule->match($statement);
+    return unless $matched;
 
     # use Data::Dumper; warn Dumper $matched;
 
