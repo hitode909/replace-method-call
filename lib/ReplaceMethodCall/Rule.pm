@@ -128,10 +128,10 @@ sub parse_args {
                     next;
                 }
 
-                if ($token eq '(') {
+                if ($token ~~ ['(', '{', '[']) {
                     $paren_level++;
                 }
-                if ($token eq ')') {
+                if ($token ~~ [')', '}', ']']) {
                     $paren_level--;
                 }
                 $buffer .= $token;

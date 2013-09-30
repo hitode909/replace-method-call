@@ -100,6 +100,34 @@ sub match_scalar : Tests {
             );
     };
 
+    subtest 'hash' => sub {
+        my $doc = doc_from_content('puts($user->{name})');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                args => [ isa('ReplaceMethodCall::Quoted')  & methods(content => q($user->{name})) ],
+            );
+    };
+
+    subtest 'array ref' => sub {
+        my $doc = doc_from_content('puts($users->[0])');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                args => [ isa('ReplaceMethodCall::Quoted')  & methods(content => q($users->[0])) ],
+            );
+    };
+
     subtest 'variable' => sub {
         my $doc = doc_from_content('puts($name)');
         my $statement = $doc->find('PPI::Statement')->[0];
