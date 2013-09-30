@@ -5,8 +5,10 @@ use Data::Dumper;
 
 sub new {
     my ($class, $content) = @_;
-    $content =~ s/^\s*//g;
-    $content =~ s/\s*$//g;
+    if ($content && $content =~ /\s/) {
+        $content =~ s/^\s*//g;
+        $content =~ s/\s*$//g;
+    }
     bless {
         content => $content,
     }, $class;

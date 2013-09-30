@@ -11,10 +11,11 @@ use Class::Accessor::Lite (
 use PPI;
 
 # rule: Rule
+# indent_level: ' ' x n
 # returns:
 #   PPI::Statement (when converted) or undef (when not)
 sub convert {
-    my ($self, $rule) = @_;
+    my ($self, $rule, $indent_level) = @_;
 
     die "apply not defined" unless defined $rule->apply;
 
@@ -23,6 +24,9 @@ sub convert {
     return undef unless defined $new_body;
 
     my $new_content = $self->part1_as_string . $new_body . $self->part2_as_string;
+
+    my $indent_string = ' ' x $indent_level;
+    $new_content =~ s/\n/\n$indent_string/gm;
 
     my $doc = PPI::Document->new(\$new_content);
     $self->{_doc} = $doc;

@@ -65,7 +65,17 @@ sub handle {
 
     # use Data::Dumper; warn Dumper $matched;
 
-    my $new_statement = $matched->convert($rule);
+    my $indent_level = do {
+        my $indent = $statement->previous_token;
+        if ($indent && $indent->isa('PPI::Token::Whitespace')) {
+            $indent =~ s/\n//g;
+            length $indent;
+        } else {
+            0;
+        }
+    };
+
+    my $new_statement = $matched->convert($rule, $indent_level);
 
     # use Data::Dumper; warn Dumper $new_statement;
 

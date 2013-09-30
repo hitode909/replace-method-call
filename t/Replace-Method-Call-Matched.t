@@ -69,6 +69,15 @@ sub convert : Tests {
         is $m->convert($r), 'converted()';
     };
 
+    subtest 'when with indent_level' => sub {
+        my $r = ReplaceMethodCall::Rule->new(
+            apply => sub { "converted(\n)" },
+        );
+        my $m = ReplaceMethodCall::Matched->new;
+        isa_ok $m->convert($r, 2), 'PPI::Statement';
+        is $m->convert($r, 2), "converted(\n  )";
+    };
+
     subtest 'part 1, 2' => sub {
         my $r = ReplaceMethodCall::Rule->new(
             apply => sub { 'converted()' },

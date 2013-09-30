@@ -90,6 +90,20 @@ sub document : Tests {
         is $doc, 'bar()', 'doc changed';
     };
 
+    subtest 'match, changed, with indent' => sub {
+        my $r = ReplaceMethodCall->new;
+
+        $r->register(
+            method_name => 'foo',
+            apply => sub { "bar(\n)" },
+        );
+
+        my $doc = doc_from_content('  foo()');
+
+        is $r->document($doc), 1;
+        is $doc, "  bar(\n  )", 'doc changed';
+    };
+
     subtest 'match, changed, using arguments' => sub {
         my $r = ReplaceMethodCall->new;
 
