@@ -142,6 +142,20 @@ sub match_scalar : Tests {
             );
     };
 
+    subtest 'variable with whitespace' => sub {
+        my $doc = doc_from_content('puts($name )');
+        my $statement = $doc->find('PPI::Statement')->[0];
+
+        my $matched = $rule->match($statement);
+        cmp_deeply $matched, isa('ReplaceMethodCall::Matched')
+            & methods(
+                method_name => 'puts',
+                part1 => [],
+                part2 => [],
+                args => [ isa('ReplaceMethodCall::Quoted')  & methods(content => q($name)) ],
+            );
+    };
+
     subtest 'method' => sub {
         my $doc = doc_from_content('puts($user->name)');
         my $statement = $doc->find('PPI::Statement')->[0];

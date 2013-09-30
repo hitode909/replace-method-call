@@ -14,6 +14,11 @@ sub instantiate : Tests {
 sub content : Tests {
     my $q = ReplaceMethodCall::Quoted->new('hi');
     is $q->content, 'hi';
+
+    subtest 'trim whitespace' => sub {
+        my $q = ReplaceMethodCall::Quoted->new(" hi  \n");
+        is $q->content, 'hi';
+    };
 }
 
 sub to_sorce : Tests {
