@@ -17,8 +17,8 @@ use ReplaceMethodCall::Quoted;
 sub match {
     my ($self, $statement) = @_;
 
-    # ignore Statement::Sub, ...
-    return undef unless ref $statement eq 'PPI::Statement';
+    # ignore sub ___ { }
+    return undef if ref $statement eq 'PPI::Statement::Sub';
 
     # statement = <part1>method_name(<args>)<part2>
 
