@@ -93,7 +93,7 @@ sub handle {
 sub quote {
     my ($self, $value) = @_;
     if (ref $value ~~ 'ARRAY') {
-        Data::Dumper->new([ map { $self->quote($_) } @$value ])->Terse(1)->Sortkeys(1)->Indent(0)->Dump;
+        '[' . join(', ',  map { $self->quote($_) } @$value) . ']';
     } elsif (ref $value && $value->isa('ReplaceMethodCall::Quoted')) {
         $value->content;
     } else {
