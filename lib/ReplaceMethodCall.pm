@@ -92,8 +92,9 @@ sub handle {
 # quote value for argument
 sub quote {
     my ($self, $value) = @_;
-
-    if (ref $value && $value->isa('ReplaceMethodCall::Quoted')) {
+    if (ref $value ~~ 'ARRAY') {
+        Data::Dumper->new([ map { $self->quote($_) } @$value ])->Terse(1)->Sortkeys(1)->Indent(0)->Dump;
+    } elsif (ref $value && $value->isa('ReplaceMethodCall::Quoted')) {
         $value->content;
     } else {
         Data::Dumper->new([$value])->Terse(1)->Sortkeys(1)->Indent(0)->Dump;

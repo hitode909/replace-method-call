@@ -38,6 +38,7 @@ sub quote : Tests {
     is $r->quote(1), '1';
     is $r->quote('a'), "'a'";
     is $r->quote(ReplaceMethodCall::Quoted->new('$user->name')), '$user->name';
+    is $r->quote([ReplaceMethodCall::Quoted->new('$user->name')]), '[$user->name]';
 }
 
 sub document : Tests {
